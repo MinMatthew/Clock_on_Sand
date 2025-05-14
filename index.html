@@ -1,105 +1,25 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clock on Sand</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000">
-  <link rel="icon" href="icon.png">
-  <link rel="apple-touch-icon" href="icon.png">
-  
-  <!-- OG 태그 -->
-  <meta property="og:title" content="Clock on Sand">
-  <meta property="og:description" content="Beautiful clock display with sand beach background">
-  <meta property="og:image" content="/Clock_on_Sand/og_image.png">
-  <meta property="og:url" content="https://yourdomain.com/Clock_on_Sand/">
-  <meta property="og:type" content="website">
-  
-  <style>
-    /* 여기에 CSS 스타일 추가 */
-    #installBtn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 1000;
-    }
-  </style>
-</head>
-<body>
-  <!-- 기존 콘텐츠 -->
-  
-  <!-- 설치 버튼 -->
-  <button id="installBtn" style="display: none;">앱 설치하기</button>
-  
-  <!-- 서비스 워커 등록 -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').then(registration => {
-          console.log('서비스 워커 등록 성공:', registration.scope);
-        }).catch(error => {
-          console.log('서비스 워커 등록 실패:', error);
-        });
-      });
-    }
-    
-    // 설치 버튼 기능
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'block';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) {
-        return;
-      }
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`사용자 선택: ${outcome}`);
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    });
-
-    window.addEventListener('appinstalled', () => {
-      console.log('PWA가 설치되었습니다');
-      installBtn.style.display = 'none';
-    });
-  </script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clock on Sand</title>
-      <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000">
-  <link rel="icon" href="icon.png">
-  <link rel="apple-touch-icon" href="icon.png">
-  
-  <!-- OG 태그 -->
-  <meta property="og:title" content="Clock on Sand">
-  <meta property="og:description" content="Beautiful clock display with sand beach background">
-  <meta property="og:image" content="/Clock_on_Sand/og_image.png">
-  <meta property="og:url" content="https://yourdomain.com/Clock_on_Sand/">
-  <meta property="og:type" content="website">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    
+    <!-- OG 태그 -->
+    <meta property="og:title" content="Clock on Sand">
+    <meta property="og:description" content="Beautiful clock display with sand beach background">
+    <meta property="og:image" content="/Clock_on_Sand/og_image.png">
+    <meta property="og:url" content="https://minmatthew.github.io/Clock_on_Sand/">
+    <meta property="og:type" content="website">
+    
     <!-- Font Awesome 라이브러리 추가 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <style>
-        
         * {
             margin: 0;
             padding: 0;
@@ -179,17 +99,17 @@
         }
 
         .clock-label {
-            font-size: 30px;
+            font-size: 15px;
             color: rgba(255, 255, 255, 0.5);
             writing-mode: vertical-lr;
             transform: rotate(180deg);
             position: absolute;
             left: -10px;
-            top: 50%;
+            top: 30%;
             transform: translateY(-50%) rotate(180deg);
         }
 
-        /* 소리 제어 버튼 스타일 수정 */
+        /* 소리 제어 버튼 스타일 */
         #soundControl {
             position: absolute;
             bottom: 20px;
@@ -211,10 +131,23 @@
             background-color: rgba(0, 0, 0, 0.7);
         }
 
-        /* 아이콘 스타일 */
         #soundControl i {
             font-size: 20px;
             color: white;
+        }
+        
+        /* 설치 버튼 스타일 */
+        #installBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
         }
 
         @media (max-width: 768px) {
@@ -249,7 +182,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- 배경 동영상 - muted 속성 제거하고 초기에는 음소거 상태로 설정 -->
+        <!-- 배경 동영상 -->
         <div class="background-container">
             <video id="bgVideo" autoplay loop playsinline>
                 <source src="videos/IMG_4231.mp4" type="video/mp4">
@@ -258,7 +191,7 @@
         
         <!-- 시계 컨테이너 -->
         <div class="clock-container">
-            <!-- 시계 레이블을 왼쪽 바깥에 세로로 표시 -->
+            <!-- 시계 레이블 -->
             <div class="clock-label">Clock on Sand</div>
             
             <div class="time-section">
@@ -294,50 +227,84 @@
             </div>
         </div>
 
-        <!-- 소리 제어 버튼 - 이모지 대신 Font Awesome 아이콘 사용 -->
+        <!-- 소리 제어 버튼 -->
         <button id="soundControl" title="소리 켜기/끄기">
             <i class="fas fa-volume-mute"></i>
         </button>
+        
+        <!-- 설치 버튼 -->
+        <button id="installBtn" style="display: none;">앱 설치하기</button>
     </div>
     
     <script>
-        // index.html 파일의 script 태그 내에 추가
-document.addEventListener('DOMContentLoaded', function() {
-    const bgVideo = document.getElementById('bgVideo');
-    
-    // 사용자 상호작용 감지
-    document.addEventListener('click', function() {
-        // 클릭 시 비디오 재생 시도
-        if (bgVideo.paused) {
-            bgVideo.play().catch(e => {
-                console.warn('비디오 재생 실패:', e);
+        // 서비스 워커 등록
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('서비스 워커 등록 성공:', registration.scope);
+                }).catch(error => {
+                    console.log('서비스 워커 등록 실패:', error);
+                });
             });
         }
-    });
-    
-    // 페이지 가시성 변경 감지
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            bgVideo.play().catch(e => {
-                console.warn('비디오 재생 실패:', e);
-            });
-        } else {
-            bgVideo.pause();
-        }
-    });
-    
-    // 비디오 로드 완료 후 재생 시도
-    bgVideo.addEventListener('loadeddata', function() {
-        bgVideo.play().catch(e => {
-            console.warn('비디오 로드 후 재생 실패:', e);
-        });
-    });
-    
-    // 기존 코드는 그대로 유지
-    // ...
-});
+        
+        // PWA 설치 기능
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
 
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) {
+                return;
+            }
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`사용자 선택: ${outcome}`);
+            deferredPrompt = null;
+            installBtn.style.display = 'none';
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA가 설치되었습니다');
+            installBtn.style.display = 'none';
+        });
+        
         document.addEventListener('DOMContentLoaded', function() {
+            const bgVideo = document.getElementById('bgVideo');
+            
+            // 사용자 상호작용 감지
+            document.addEventListener('click', function() {
+                // 클릭 시 비디오 재생 시도
+                if (bgVideo.paused) {
+                    bgVideo.play().catch(e => {
+                        console.warn('비디오 재생 실패:', e);
+                    });
+                }
+            });
+            
+            // 페이지 가시성 변경 감지
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    bgVideo.play().catch(e => {
+                        console.warn('비디오 재생 실패:', e);
+                    });
+                } else {
+                    bgVideo.pause();
+                }
+            });
+            
+            // 비디오 로드 완료 후 재생 시도
+            bgVideo.addEventListener('loadeddata', function() {
+                bgVideo.play().catch(e => {
+                    console.warn('비디오 로드 후 재생 실패:', e);
+                });
+            });
+            
             // 숫자 비디오 요소들 가져오기
             const hoursTens = document.getElementById('hours-tens');
             const hoursOnes = document.getElementById('hours-ones');
@@ -347,36 +314,34 @@ document.addEventListener('DOMContentLoaded', function() {
             const secondsOnes = document.getElementById('seconds-ones');
             
             // 배경 비디오 및 소리 제어 버튼
-            const bgVideo = document.getElementById('bgVideo');
             const soundControl = document.getElementById('soundControl');
             const soundIcon = soundControl.querySelector('i');
             
             // 초기에는 음소거 상태로 설정
             bgVideo.muted = true;
             
-            // 소리 제어 버튼 클릭 이벤트 수정
+            // 소리 제어 버튼 클릭 이벤트
             soundControl.addEventListener('click', function() {
                 if (bgVideo.muted) {
                     // 소리 켜기
                     bgVideo.muted = false;
-                    soundIcon.className = 'fas fa-volume-up'; // 아이콘 변경
+                    soundIcon.className = 'fas fa-volume-up';
                     soundControl.title = '소리 끄기';
                     
-                    // 자동 재생 정책으로 인해 play() 메서드 호출이 필요할 수 있음
+                    // 자동 재생 정책으로 인해 play() 메서드 호출
                     const playPromise = bgVideo.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(error => {
                             console.error('비디오 재생 오류:', error);
-                            // 자동 재생이 차단된 경우 다시 음소거
                             bgVideo.muted = true;
-                            soundIcon.className = 'fas fa-volume-mute'; // 아이콘 변경
+                            soundIcon.className = 'fas fa-volume-mute';
                             soundControl.title = '소리 켜기';
                         });
                     }
                 } else {
                     // 소리 끄기
                     bgVideo.muted = true;
-                    soundIcon.className = 'fas fa-volume-mute'; // 아이콘 변경
+                    soundIcon.className = 'fas fa-volume-mute';
                     soundControl.title = '소리 켜기';
                 }
             });
