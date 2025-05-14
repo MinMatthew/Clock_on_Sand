@@ -1,12 +1,105 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clock on Sand</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  
+  <!-- OG 태그 -->
+  <meta property="og:title" content="Clock on Sand">
+  <meta property="og:description" content="Beautiful clock display with sand beach background">
+  <meta property="og:image" content="/Clock_on_Sand/og_image.png">
+  <meta property="og:url" content="https://yourdomain.com/Clock_on_Sand/">
+  <meta property="og:type" content="website">
+  
+  <style>
+    /* 여기에 CSS 스타일 추가 */
+    #installBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <!-- 기존 콘텐츠 -->
+  
+  <!-- 설치 버튼 -->
+  <button id="installBtn" style="display: none;">앱 설치하기</button>
+  
+  <!-- 서비스 워커 등록 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(registration => {
+          console.log('서비스 워커 등록 성공:', registration.scope);
+        }).catch(error => {
+          console.log('서비스 워커 등록 실패:', error);
+        });
+      });
+    }
+    
+    // 설치 버튼 기능
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        return;
+      }
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`사용자 선택: ${outcome}`);
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('PWA가 설치되었습니다');
+      installBtn.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clock on Sand</title>
+      <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  
+  <!-- OG 태그 -->
+  <meta property="og:title" content="Clock on Sand">
+  <meta property="og:description" content="Beautiful clock display with sand beach background">
+  <meta property="og:image" content="/Clock_on_Sand/og_image.png">
+  <meta property="og:url" content="https://yourdomain.com/Clock_on_Sand/">
+  <meta property="og:type" content="website">
     <!-- Font Awesome 라이브러리 추가 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        
         * {
             margin: 0;
             padding: 0;
