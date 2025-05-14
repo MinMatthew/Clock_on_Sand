@@ -16,41 +16,7 @@ const urlsToCache = [
   '/Clock_on_Sand/videos/8.mp4',
   '/Clock_on_Sand/videos/9.mp4'
 ];
-// 비디오 자동 재생 문제 해결을 위한 코드 수정
-document.addEventListener('DOMContentLoaded', function() {
-    const bgVideo = document.getElementById('bgVideo');
-    
-    // 사용자 상호작용 감지
-    document.addEventListener('click', function() {
-        // 클릭 시 비디오 재생 시도
-        if (bgVideo.paused) {
-            bgVideo.play().catch(e => {
-                console.warn('비디오 재생 실패:', e);
-            });
-        }
-    });
-    
-    // 페이지 가시성 변경 감지
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            bgVideo.play().catch(e => {
-                console.warn('비디오 재생 실패:', e);
-            });
-        } else {
-            bgVideo.pause();
-        }
-    });
-    
-    // 비디오 로드 완료 후 재생 시도
-    bgVideo.addEventListener('loadeddata', function() {
-        bgVideo.play().catch(e => {
-            console.warn('비디오 로드 후 재생 실패:', e);
-        });
-    });
-    
-    // 나머지 시계 관련 코드는 그대로 유지
-    // ...
-});
+
 // 서비스 워커 설치 및 캐시
 self.addEventListener('install', event => {
   event.waitUntil(
