@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock on Sand</title>
+    <!-- Font Awesome 라이브러리 추가 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background-color: #000;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .background-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        #bgVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .clock-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            background-color: transparent;
+            padding: 30px;
+        }
+
+        .time-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .time-unit {
+            display: flex;
+            gap: 10px;
+            margin: 0 30px;
+        }
+
+        .digit-container {
+            width: 100px;
+            height: 300px;
+            background-color: transparent;
+            overflow: hidden;
+            position: relative;
+            border: none;
+        }
+
+        .digit-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .clock-label {
+            font-size: 30px;
+            color: rgba(255, 255, 255, 0.5);
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        /* 소리 제어 버튼 스타일 수정 */
+        #soundControl {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 20;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #soundControl:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* 아이콘 스타일 */
+        #soundControl i {
+            font-size: 20px;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .digit-container {
+                width: 60px;
+                height: 180px;
+            }
+            
+            .time-unit {
+                margin: 0 15px;
+            }
+            
+            .time-section {
+                padding: 10px;
+            }
+            
+            .clock-label {
+                left: -10px;
+                font-size: 30px;
+            }
+
+            #soundControl {
+                width: 40px;
+                height: 40px;
+            }
+            
+            #soundControl i {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 배경 동영상 - muted 속성 제거하고 초기에는 음소거 상태로 설정 -->
+        <div class="background-container">
+            <video id="bgVideo" autoplay loop playsinline>
+                <source src="videos/IMG_4231.mp4" type="video/mp4">
+            </video>
+        </div>
+        
+        <!-- 시계 컨테이너 -->
+        <div class="clock-container">
+            <!-- 시계 레이블을 왼쪽 바깥에 세로로 표시 -->
+            <div class="clock-label">Clock on Sand</div>
+            
+            <div class="time-section">
+                <!-- 시간 그룹 -->
+                <div class="time-unit">
+                    <div class="digit-container">
+                        <video id="hours-tens" class="digit-video" autoplay loop muted playsinline></video>
+                    </div>
+                    <div class="digit-container">
+                        <video id="hours-ones" class="digit-video" autoplay loop muted playsinline></video>
+                    </div>
+                </div>
+                
+                <!-- 분 그룹 -->
+                <div class="time-unit">
+                    <div class="digit-container">
+                        <video id="minutes-tens" class="digit-video" autoplay loop muted playsinline></video>
+                    </div>
+                    <div class="digit-container">
+                        <video id="minutes-ones" class="digit-video" autoplay loop muted playsinline></video>
+                    </div>
+                </div>
+                
+                <!-- 초 그룹 -->
+                <div class="time-unit">
+                    <div class="digit-container">
+                        <video id="seconds-tens" class="digit-video" autoplay loop muted playsinline></video>
+                    </div>
+                    <div class="digit-container">
+                        <video id="seconds-ones" class="digit-video" autoplay loop muted playsinline></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 소리 제어 버튼 - 이모지 대신 Font Awesome 아이콘 사용 -->
+        <button id="soundControl" title="소리 켜기/끄기">
+            <i class="fas fa-volume-mute"></i>
+        </button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 숫자 비디오 요소들 가져오기
+            const hoursTens = document.getElementById('hours-tens');
+            const hoursOnes = document.getElementById('hours-ones');
+            const minutesTens = document.getElementById('minutes-tens');
+            const minutesOnes = document.getElementById('minutes-ones');
+            const secondsTens = document.getElementById('seconds-tens');
+            const secondsOnes = document.getElementById('seconds-ones');
+            
+            // 배경 비디오 및 소리 제어 버튼
+            const bgVideo = document.getElementById('bgVideo');
+            const soundControl = document.getElementById('soundControl');
+            const soundIcon = soundControl.querySelector('i');
+            
+            // 초기에는 음소거 상태로 설정
+            bgVideo.muted = true;
+            
+            // 소리 제어 버튼 클릭 이벤트 수정
+            soundControl.addEventListener('click', function() {
+                if (bgVideo.muted) {
+                    // 소리 켜기
+                    bgVideo.muted = false;
+                    soundIcon.className = 'fas fa-volume-up'; // 아이콘 변경
+                    soundControl.title = '소리 끄기';
+                    
+                    // 자동 재생 정책으로 인해 play() 메서드 호출이 필요할 수 있음
+                    const playPromise = bgVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.error('비디오 재생 오류:', error);
+                            // 자동 재생이 차단된 경우 다시 음소거
+                            bgVideo.muted = true;
+                            soundIcon.className = 'fas fa-volume-mute'; // 아이콘 변경
+                            soundControl.title = '소리 켜기';
+                        });
+                    }
+                } else {
+                    // 소리 끄기
+                    bgVideo.muted = true;
+                    soundIcon.className = 'fas fa-volume-mute'; // 아이콘 변경
+                    soundControl.title = '소리 켜기';
+                }
+            });
+            
+            // 이전 시간 값을 저장하는 변수들
+            let prevHoursTens = -1;
+            let prevHoursOnes = -1;
+            let prevMinutesTens = -1;
+            let prevMinutesOnes = -1;
+            let prevSecondsTens = -1;
+            let prevSecondsOnes = -1;
+            
+            // 숫자 비디오 경로 설정 및 재생 함수
+            function updateDigitVideo(element, digit) {
+                const videoPath = `videos/${digit}.mp4`;
+                
+                // 소스 업데이트
+                if (element.querySelector('source')) {
+                    element.querySelector('source').src = videoPath;
+                } else {
+                    const source = document.createElement('source');
+                    source.src = videoPath;
+                    source.type = 'video/mp4';
+                    element.appendChild(source);
+                }
+                
+                // 비디오 로드 및 재생
+                element.load();
+                
+                const playPromise = element.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.error('Video play error:', error);
+                    });
+                }
+            }
+            
+            // 시계 업데이트 함수
+            function updateClock() {
+                const now = new Date();
+                
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                
+                const hoursTensDigit = parseInt(hours[0]);
+                const hoursOnesDigit = parseInt(hours[1]);
+                const minutesTensDigit = parseInt(minutes[0]);
+                const minutesOnesDigit = parseInt(minutes[1]);
+                const secondsTensDigit = parseInt(seconds[0]);
+                const secondsOnesDigit = parseInt(seconds[1]);
+                
+                // 변경된 숫자만 업데이트
+                if (hoursTensDigit !== prevHoursTens) {
+                    updateDigitVideo(hoursTens, hoursTensDigit);
+                    prevHoursTens = hoursTensDigit;
+                }
+                
+                if (hoursOnesDigit !== prevHoursOnes) {
+                    updateDigitVideo(hoursOnes, hoursOnesDigit);
+                    prevHoursOnes = hoursOnesDigit;
+                }
+                
+                if (minutesTensDigit !== prevMinutesTens) {
+                    updateDigitVideo(minutesTens, minutesTensDigit);
+                    prevMinutesTens = minutesTensDigit;
+                }
+                
+                if (minutesOnesDigit !== prevMinutesOnes) {
+                    updateDigitVideo(minutesOnes, minutesOnesDigit);
+                    prevMinutesOnes = minutesOnesDigit;
+                }
+                
+                if (secondsTensDigit !== prevSecondsTens) {
+                    updateDigitVideo(secondsTens, secondsTensDigit);
+                    prevSecondsTens = secondsTensDigit;
+                }
+                
+                if (secondsOnesDigit !== prevSecondsOnes) {
+                    updateDigitVideo(secondsOnes, secondsOnesDigit);
+                    prevSecondsOnes = secondsOnesDigit;
+                }
+            }
+            
+            // 초기 시계 설정
+            updateClock();
+            
+            // 2초마다 시계 업데이트
+            setInterval(updateClock, 2000);
+            
+            // 모든 숫자 비디오 요소 자동 재생 설정
+            document.querySelectorAll('.digit-video').forEach(video => {
+                video.play().catch(e => {
+                    console.warn('자동 재생 실패:', e);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
